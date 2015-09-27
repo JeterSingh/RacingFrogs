@@ -32,16 +32,16 @@ function MainController() {
         }
     }
 
-    vm.giveMoneyToJoe = function() {
-        if (vm.bank.cash >= 10) {
-            vm.bank.cash -= vm.joe.receiveCash(10)
+    vm.giveMoneyToJoe = function(amount) {
+        if (vm.bank.cash >= amount) {
+            vm.bank.cash -= vm.joe.receiveCash(amount);
         } else {
-            alert("The bank is out of money.")
+            alert("The bank is out of money.");
         }
     }
 
-    vm.receiveMoneyFromBob = function() {
-        vm.bank.cash += vm.bob.giveCash(5)
+    vm.receiveMoneyFromBob = function(amount) {
+        vm.bank.cash += vm.bob.giveCash(amount);
     }
 
 }

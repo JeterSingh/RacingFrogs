@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Racing Frogs</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body ng-controller="MainController as vm">
@@ -26,8 +26,11 @@
                 </p>
             </div>
             <div class="panel-footer">
-                <span class="btn btn-default" ng-click="vm.giveMoneyToJoe()">Give $10 to Joe</span>
-                <span class="btn btn-default" ng-click="vm.receiveMoneyFromBob()">Receive $5 from Bob</span>
+                <span class ="txt">How many $ should the bank give Joe:  $<input type="number" value = "0" min="0" max="100" step="5" class = "numBox" data-ng-model="giveJoe"/><span>
+                <span class="btn btn-default" ng-click="vm.giveMoneyToJoe(giveJoe)">Bank gives {{giveJoe | currency:USD$:0}} to Joe</span>
+                <p></p>
+                <span class ="txt">Enter how many $ should the bank receive from Bob:  $<input type="number" value = "0" min="0" max="100" step="5"class = "numBox" data-ng-model="receiveBob"/><span>
+                <span class="btn btn-default" ng-click="vm.receiveMoneyFromBob(receiveBob)">Bank receives {{receiveBob | currency:USD$:0}} from Bob</span>
             </div>
         </div>
     </div>
