@@ -11,6 +11,27 @@
     {{1+2}}
     <div class="container">
         <div class="panel panel-primary">
+            <div class="panel-heading"> Joe and Bob Void Filler</div>
+            <div class="panel-body">
+                <table ng-repeat="frog in vm.frogs">
+                    <tr>
+                        <td style="border: 1px solid black; width: 200px">{{frog.name}}</td>
+                        <td style="border: 1px dashed black; position:relative" width="90%" height="30px">
+                            <span style="position: absolute; top: 0; bottom: 0; left: {{frog.pos}}%; width: 20px; background-color: deeppink;"></span>
+                            <span class="pull-left">START</span>
+                            <span class="pull-right"> || FINISH</span>
+                        </td>
+                    </tr>
+                </table>
+                ​
+            </div>
+            <div class="panel-footer">
+                <span class="btn btn-warning" ng-click="vm.race()">Start Race</span>
+                <span class="btn btn-warning" ng-click="vm.reset()">Reset</span>
+            </div>
+            ​
+        </div>
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 Fun with Joe and Bob
             </div>
@@ -26,10 +47,10 @@
                 </p>
             </div>
             <div class="panel-footer">
-                <span class ="txt">How many $ should the bank give Joe:  $<input type="number" value = "0" min="0" max="100" step="5" class = "numBox" data-ng-model="giveJoe"/><span>
+                <span class="txt">How many $ should the bank give Joe:  $<input type="number" value = "0" min="0" max="100" step="5" class = "numBox" data-ng-model="giveJoe"/><span>
                 <span class="btn btn-default" ng-click="vm.giveMoneyToJoe(giveJoe)">Bank gives {{giveJoe | currency:USD$:0}} to Joe</span>
                 <p></p>
-                <span class ="txt">Enter how many $ should the bank receive from Bob:  $<input type="number" value = "0" min="0" max="100" step="5"class = "numBox" data-ng-model="receiveBob"/><span>
+                <span class="txt">Enter how many $ should the bank receive from Bob:  $<input type="number" value = "0" min="0" max="100" step="5"class = "numBox" data-ng-model="receiveBob"/><span>
                 <span class="btn btn-default" ng-click="vm.receiveMoneyFromBob(receiveBob)">Bank receives {{receiveBob | currency:USD$:0}} from Bob</span>
             </div>
         </div>
