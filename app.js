@@ -43,6 +43,7 @@ function MainController() {
 
     vm.reset = function () {
         //console.log('inside race function');
+          vm.winnerFlag = 0;
         for (var i = 0; i < vm.frogs.length; i++) {
             vm.frogs[i].pos = 0;
         }
