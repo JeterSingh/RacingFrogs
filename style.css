@@ -6,19 +6,33 @@
 	width: 60;
 }
 
+#buttons {
+		width: 75px;
+}
+
 .btn-default {
 	font-weight: bold;
 	background-color: white;
+
 }
 
-.panel-heading {
+#right {
+	 padding-top: -30px;
+	 top: -97px;
+	 position: relative;
+	 float: right;
 }
 
-/*td.name {
-	width:40%;
+.list-group-item-success{
+	font-weight: bold;
 }
 
-td.track {
-	width:60%;
-	border: 1px dotted blue;
-}*/
+.list-group {
+	font-weight: bold;
+}
+
+#main {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+}

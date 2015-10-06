@@ -10,27 +10,54 @@
 <body ng-controller="MainController as vm">
     {{1+2}}
     <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-heading"> Joe and Bob Void Filler</div>
+        <div class="panel panel-success">
+            <div class="panel-heading" id="main"> RACING FROGS</div>
             <div class="panel-body">
-                <table ng-repeat="frog in vm.frogs">
+                <table ng-repeat="frog in vm.frogs" class="col-md-8">
                     <tr>
-                        <td style="border: 1px solid black; width: 200px">{{frog.name}}</td>
+                        <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default">{{frog.name}}</span></td>
                         <td style="border: 1px dashed black; position:relative" width="90%" height="30px">
-                            <span style="position: absolute; top: 0; bottom: 0; left: {{frog.pos}}%; width: 20px; background-color: deeppink;"></span>
+                            <span style="position: absolute; top: 0; bottom: 0;left: {{frog.pos}}%; width: 20px; background-color: deeppink;"></span>
                             <span class="pull-left">START</span>
-                            <span class="pull-right"> || FINISH</span>
+                            <span class="pull-right"> ||FINISH</span>
                         </td>
                     </tr>
                 </table>
-                ​
+
+                <div id="right" class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Try your luck and increase your cash on hand by setting a bid amount outcome and then clicking on
+                            the frog's name to confirm your choice</div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li class="list-group-item list-group-item-success">Cash on hand:</li>
+                            </ul>
+                            <ul class="list-group">
+                                <li class="list-group-item list-group-item-warning">
+                                    Wager:
+                                    <input />
+                                </li>
+                            </ul>
+                            <span>Bets:</span>
+                            <ul class="list-group">
+                                <li class="list-group-item list-group-item-info">Bet:</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--end second column-->
+
             </div>
             <div class="panel-footer">
-                <span class="btn btn-warning" ng-click="vm.race()">Start Race</span>
-                <span class="btn btn-warning" ng-click="vm.reset()">Reset</span>
+                <span class="btn btn-default" ng-click="vm.newRace()">New Race</span>
+                <span class="btn btn-default" ng-click="vm.race()">Start Race</span>
+                <span class="btn btn-default" ng-click="vm.addFrog( )">Add Frog</span>
+                <span class="btn btn-default" ng-click="vm.printRace( )">Print Race</span>
+                <span style="font-weight:bold">Race Id:{{vm.raceId}}</span>
             </div>
-            ​
+
         </div>
+
         <div class="panel panel-primary">
             <div class="panel-heading">
                 Fun with Joe and Bob
