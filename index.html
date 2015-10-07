@@ -12,7 +12,7 @@
     <div class="container">
         <div class="panel panel-success">
             <div class="panel-heading" id="main"> RACING FROGS</div>
-            <div class="panel-body">
+            <div class="panel-body" >
                 <table ng-repeat="frog in vm.frogs" class="col-md-8">
                     <tr>
                         <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default">{{frog.name}}</span></td>
@@ -53,7 +53,12 @@
                 <span class="btn btn-default" ng-click="vm.race()">Start Race</span>
                 <span class="btn btn-default" ng-click="vm.addFrog( )">Add Frog</span>
                 <span class="btn btn-default" ng-click="vm.printRace( )">Print Race</span>
-                <span style="font-weight:bold">Race Id:{{vm.raceId}}</span>
+                <span style="font-weight:bold">Race Id:   {{vm.raceId}}</span>
+                <span id ="change">Change Race:                  
+                    <select class ="select" ng-model = "selectedRace" ng-options="o for o in vm.arrayOfIds" ng-change ="vm.changeRace(selectedRace)">
+         
+                    </select>
+                </span>
             </div>
 
         </div>

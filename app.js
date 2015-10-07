@@ -3,14 +3,30 @@ app.controller('MainController', MainController);
 //No need to change anything above this line.
 
 function MainController(BettingService, $timeout) {
-    var vm = this; //instead of using this when refering to the controller, let's use vm. It will make things easier.
-    vm.frogs = [];
-    vm.winnerFlag = 0;
+    var vm = this; 
+    vm.winnerFlag = false;
     vm.racing = false;
-   vm.currentRace = BettingService.getRace(vm.raceId); 
+    vm.frogs = [];
+    vm.currentRace = {};
+    vm.arrayOfIds = [];
     vm.newRace = function () {
-        //vm.frogs=[];
+        if (!vm.currentRace.open) {  // want to prevent new race registered before current race is completed
         vm.raceId = BettingService.registerRace();
+        vm.arrayOfIds.push(vm.raceId);
+        vm.currentRace = BettingService.getRace(vm.raceId);
+        vm.frogs=[];
+        vm.winnerFlag = false;
+        vm.racing = false;
+        } else {alert('please complete current race before a new race can be registered');}
+    }
+    
+    vm.changeRace = function(id) {
+        //console.log('in change race function to ' +id);
+        vm.currentRace = BettingService.getRace(id);
+        vm.raceId = id;
+        vm.frogs = BettingService.getContestants(id);
+        vm.winnerFlag = true;
+        vm.racing = false;
     }
     
 vm.printRace = function() {
@@ -49,10 +65,11 @@ vm.printRace = function() {
                 var newPos = currentPos + randomStep / 100;
                 vm.frogs[i].pos = Math.min(newPos, 100);
             }
-            if (vm.frogs[i].pos >= 100 && vm.winnerFlag === 0) {
-                vm.winnerFlag = 1;
+            if (vm.frogs[i].pos >= 100 && !vm.winnerFlag) {
+                vm.winnerFlag = true;
                 vm.racing = false;
-                //BettingService.closeRace(vm.raceId);
+                BettingService.closeRace(vm.raceId);
+                console.log(vm.currentRace, vm.raceId);
                 alert('We have a winner ' + vm.frogs[i].name + ' at ' + vm.frogs[i].pos);
                 break;
             }
@@ -67,13 +84,13 @@ vm.printRace = function() {
     vm.bob = new Guy("Bob", 150)
     vm.bank = new Guy("Bank", 200);
 
-    vm.reset = function () {
-        vm.winnerFlag = 0;
-        //console.log('entering reset function');
-        for (var i = 0; i < vm.frogs.length; i++) {
-            vm.frogs[i].pos = 0;
-        }
-    }
+    // vm.reset = function () {
+    //     vm.winnerFlag = 0;
+    //     //console.log('entering reset function');
+    //     for (var i = 0; i < vm.frogs.length; i++) {
+    //         vm.frogs[i].pos = 0;
+    //     }
+    // }
 
 
 
@@ -128,15 +145,20 @@ function BettingService() {
     }
 
     this.addContestant = function (raceId, contestant) {
-        //Adds a frog to the race object remember to get the race first
-        //Also dont let frogs be added after the race has started.
         _races[raceId].contestants.push(contestant);
     }
     
-    // this.closeRace = function (raceId) {
-    //     //No more bets please the race has started
-    //     _races[raceId].open = false;
-    // }
+    this.closeRace = function (raceId) {
+        //No more bets please the race has started
+        _races[raceId].open = false;
+    }
+
+    this.getContestants = function (raceId) {
+        //just returns the contestants for a specified race
+        return _races[raceId].contestants; // an array of contestants for the current race
+    }
+   
+
 
     var Race = function () {
         this.id = _raceId;
