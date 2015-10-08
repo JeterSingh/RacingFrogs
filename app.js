@@ -9,6 +9,9 @@ function MainController(BettingService, $timeout) {
     vm.frogs = [];
     vm.currentRace = {};
     vm.arrayOfIds = [];
+    vm.arrayOfBets = [];
+    vm.maxLength = 8; // max number of frogs
+    vm.cashOnHand = 300;
     vm.newRace = function () {
         if (!vm.currentRace.open) {  // want to prevent new race registered before current race is completed
         vm.raceId = BettingService.registerRace();
@@ -17,21 +20,38 @@ function MainController(BettingService, $timeout) {
         vm.frogs=[];
         vm.winnerFlag = false;
         vm.racing = false;
+        vm.arrayOfBets = [];
         } else {alert('please complete current race before a new race can be registered');}
     }
     
     vm.changeRace = function(id) {
-        //console.log('in change race function to ' +id);
+        if (!vm.racing) {
         vm.currentRace = BettingService.getRace(id);
         vm.raceId = id;
         vm.frogs = BettingService.getContestants(id);
         vm.winnerFlag = true;
-        vm.racing = false;
+        vm.racing = false; } 
     }
     
 vm.printRace = function() {
     console.log(vm.currentRace);}
     
+vm.newBet = function(name, bet) {
+    if (!vm.racing) {
+        if (bet > 0) {
+             var thisBet = {
+            name: name,
+            wager: bet
+        };
+    alert('you want to bet '+bet + ' on ' +name);
+    BettingService.placeBet(vm.raceId, name, bet);
+    vm.cashOnHand -= bet;
+    vm.arrayOfBets.push(thisBet);
+    }
+    else {alert("bets need to be greater than zero");}
+    }
+    else {alert('cant bet after the race has started');}
+}
     
     vm.createFrogObj = function (name, posx) {
         var thisFrog = {
@@ -45,8 +65,10 @@ vm.printRace = function() {
     vm.addFrog = function () {
         if (vm.raceId != undefined) {
             if (!vm.racing) {
+                if (vm.frogs.length <=7) {
                 var thisFr = vm.createFrogObj('Frog' + ' ' + (vm.frogs.length + 1), 0);
-                BettingService.addContestant(vm.raceId, thisFr);
+                BettingService.addContestant(vm.raceId, thisFr); }
+                else {alert('max of eight contestants reached');}
             } else {alert("Cant add frogs after race has started");}
         }
         else { alert("must register a race by hitting new race before adding frogs"); }
@@ -83,15 +105,6 @@ vm.printRace = function() {
     vm.joe = new Guy("Joe", 100)
     vm.bob = new Guy("Bob", 150)
     vm.bank = new Guy("Bank", 200);
-
-    // vm.reset = function () {
-    //     vm.winnerFlag = 0;
-    //     //console.log('entering reset function');
-    //     for (var i = 0; i < vm.frogs.length; i++) {
-    //         vm.frogs[i].pos = 0;
-    //     }
-    // }
-
 
 
     function Guy(name, startingCash) {
@@ -158,14 +171,26 @@ function BettingService() {
         return _races[raceId].contestants; // an array of contestants for the current race
     }
    
-
+ this.placeBet = function (raceId, bettingOn, wager) {
+         
+        var thisRace = this.getRace(raceId);
+        if (thisRace != undefined) {
+        var thisBet = {
+            name: bettingOn,
+            wager: wager
+        };
+      
+        thisRace.bets.push(thisBet);
+        thisRace.tickets+=wager;
+        }
+    }
 
     var Race = function () {
         this.id = _raceId;
-        this.tickets = 1300;
+        this.tickets = 0;
         this.contestants = [];
         this.open = true;
-        this.bets = {};
+        this.bets = [];                       // was {}
         _races[this.id] = this;
         _raceId++;
     }

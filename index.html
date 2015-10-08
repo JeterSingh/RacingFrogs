@@ -8,14 +8,13 @@
 </head>
 
 <body ng-controller="MainController as vm">
-    {{1+2}}
     <div class="container">
         <div class="panel panel-success">
-            <div class="panel-heading" id="main"> RACING FROGS</div>
-            <div class="panel-body" >
+            <div class="panel-heading" id="main"> RACING FROGS - RACE {{vm.raceId}}</div>
+            <div class="panel-body">
                 <table ng-repeat="frog in vm.frogs" class="col-md-8">
                     <tr>
-                        <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default">{{frog.name}}</span></td>
+                        <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default" ng-disabled="vm.racing" ng-click="vm.newBet(frog.name, wager)">{{frog.name}}</span></td>
                         <td style="border: 1px dashed black; position:relative" width="90%" height="30px">
                             <span style="position: absolute; top: 0; bottom: 0;left: {{frog.pos}}%; width: 20px; background-color: deeppink;"></span>
                             <span class="pull-left">START</span>
@@ -30,17 +29,17 @@
                             the frog's name to confirm your choice</div>
                         <div class="panel-body">
                             <ul class="list-group">
-                                <li class="list-group-item list-group-item-success">Cash on hand:</li>
+                                <li class="list-group-item list-group-item-success">Cash on hand: {{vm.cashOnHand | currency:USD$:0}}</li>
                             </ul>
                             <ul class="list-group">
                                 <li class="list-group-item list-group-item-warning">
                                     Wager:
-                                    <input />
+                                    <input ng-model="wager" />
                                 </li>
                             </ul>
                             <span>Bets:</span>
-                            <ul class="list-group">
-                                <li class="list-group-item list-group-item-info">Bet:</li>
+                            <ul class="list-group" ng-repeat="bet in vm.arrayOfBets">
+                                <li class="list-group-item list-group-item-info">You bet {{bet.wager | currency:USD$:0}} on {{bet.name}}</li>
                             </ul>
                         </div>
                     </div>
@@ -49,13 +48,14 @@
 
             </div>
             <div class="panel-footer">
-                <span class="btn btn-default" ng-click="vm.newRace()">New Race</span>
-                <span class="btn btn-default" ng-click="vm.race()">Start Race</span>
-                <span class="btn btn-default" ng-click="vm.addFrog( )">Add Frog</span>
+                <span class="btn btn-default" ng-disabled="vm.racing" ng-click="vm.newRace()">New Race</span>
+                <span class="btn btn-default" ng-disabled="vm.raceId === undefined || vm.frogs.length === 0 || vm.winnerFlag || vm.racing"
+                ng-click="vm.race()">Start Race</span>
+                <span class="btn btn-default" ng-disabled="vm.racing || vm.raceId === undefined || vm.winnerFlag" ng-click="vm.addFrog( )">Add Frog</span>
                 <span class="btn btn-default" ng-click="vm.printRace( )">Print Race</span>
                 <span style="font-weight:bold">Race Id:   {{vm.raceId}}</span>
-                <span id ="change">Change Race:                  
-                    <select class ="select" ng-model = "selectedRace" ng-options="o for o in vm.arrayOfIds" ng-change ="vm.changeRace(selectedRace)">
+                <span id="change">Change Race:                  
+                    <select class ="select" ng-model = "selectedRace" ng-disabled ="vm.racing" ng-options="o for o in vm.arrayOfIds" ng-change ="vm.changeRace(selectedRace)" >
          
                     </select>
                 </span>
