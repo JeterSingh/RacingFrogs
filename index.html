@@ -14,9 +14,9 @@
             <div class="panel-body">
                 <table ng-repeat="frog in vm.frogs" class="col-md-8">
                     <tr>
-                        <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default" ng-disabled="vm.racing" ng-click="vm.newBet(frog.name, wager)">{{frog.name}}</span></td>
+                        <td style="border: 1px solid black; width: 200px"><span id="buttons" class="btn btn-default" ng-disabled="vm.racing || !vm.currentRace.open" ng-click="vm.newBet(frog.name, wager)">{{frog.name}}</span></td>
                         <td style="border: 1px dashed black; position:relative" width="90%" height="30px">
-                            <span style="position: absolute; top: 0; bottom: 0;left: {{frog.pos}}%; width: 20px; background-color: deeppink;"></span>
+                            <span style="position: absolute; top: 0; bottom: 0;left: {{frog.pos}}%; width: 20px; background-color: deeppink;" ng-style="vm.isWinner(frog) && {'background-color': 'green'}"></span>
                             <span class="pull-left">START</span>
                             <span class="pull-right"> ||FINISH</span>
                         </td>

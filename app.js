@@ -42,7 +42,7 @@ vm.printRace = function() {
     console.log(vm.currentRace);}
     
 vm.newBet = function(name, bet) {
-    if (BettingService.isValidBet(bet, vm.cashOnHand, vm.frogs.length, vm.racing)) {
+    if (BettingService.isValidBet(bet, vm.cashOnHand, vm.frogs.length, vm.racing, vm.currentRace.open)) {
              var thisBet = {
             name: name,
             wager: bet
@@ -82,20 +82,25 @@ vm.newBet = function(name, bet) {
          var betPaidOff = false;
          var winningWager = 0;
          vm.currentRace = BettingService.getRace(vm.raceId);
+         var sumOfBets = 0;
         for (var i = 0; i<vm.currentRace.bets.length; i++) {
             var betObj = vm.currentRace.bets[i];
+            sumOfBets += parseInt(betObj.wager);
             if (betObj.name === winningFrog.name) {
                 betPaidOff = true;
                 winningWager = betObj.wager; }
         }
         if (betPaidOff) {
-            alert('Congrats. You picked the winning frog '+winningFrog.name+ ' and won twice your bet of '+winningWager);
-            //console.log(vm.cashOnHand, winningWager);
+            alert('Congrats. You picked the winning frog '+winningFrog.name+ ' and won twice your bet of $'+winningWager);
             vm.cashOnHand = vm.cashOnHand + winningWager*2;
             
-        } else {alert('sorry. your frog(s) didnt win');}
+        } else {alert('Sorry. Your frog(s) didnt win. you are out $'+sumOfBets);}
      }
 
+vm.isWinner = function(frog) {
+    //console.log(frog === vm.currentRace.winner);
+    return frog === vm.currentRace.winner;
+}
 
     vm.race = function () {
         if (vm.frogs.length <= 0) {
@@ -195,7 +200,12 @@ function BettingService() {
       _races[id].winner = winner;
    }
    
- this.isValidBet = function(bet, cash, len, racing) {
+ this.isValidBet = function(bet, cash, len, racing, isRaceOpen) {
+   if (!isRaceOpen) {
+       alert('The race is closed. You cant bet on it any more');
+       return false;
+   }
+   
    if (racing) {
        alert('Cant bet after the race has started');
        return false;
@@ -207,7 +217,8 @@ function BettingService() {
    else if (bet > cash) {
        alert('You cant bet more than your cash on hand. Try again');
        return false;
-   } else if (len <=1) {
+   } 
+   else if (len <=1) {
        alert('need at lest two players to bet');
        return false;
    }
