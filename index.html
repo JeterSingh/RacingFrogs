@@ -34,7 +34,7 @@
                             <ul class="list-group">
                                 <li class="list-group-item list-group-item-warning">
                                     Wager:
-                                    <input ng-model="wager" />
+                                    <input ng-model="wager" id = "wagerInput"/>
                                 </li>
                             </ul>
                             <span>Bets:</span>
@@ -51,7 +51,8 @@
                 <span class="btn btn-default" ng-disabled="vm.racing" ng-click="vm.newRace()">New Race</span>
                 <span class="btn btn-default" ng-disabled="vm.raceId === undefined || vm.frogs.length === 0 || vm.winnerFlag || vm.racing"
                 ng-click="vm.race()">Start Race</span>
-                <span class="btn btn-default" ng-disabled="vm.racing || vm.raceId === undefined || vm.winnerFlag" ng-click="vm.addFrog( )">Add Frog</span>
+                <span class="btn btn-default" ng-disabled="vm.racing || vm.raceId === undefined || vm.winnerFlag || vm.frogs.length >= vm.maxFrogs"
+                ng-click="vm.addFrog()">Add Frog</span>
                 <span class="btn btn-default" ng-click="vm.printRace( )">Print Race</span>
                 <span style="font-weight:bold">Race Id:   {{vm.raceId}}</span>
                 <span id="change">Change Race:                  

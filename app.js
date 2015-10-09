@@ -1,3 +1,4 @@
+/* global angular */
 var app = angular.module('racingFrogs', []);
 app.controller('MainController', MainController);
 //No need to change anything above this line.
@@ -10,8 +11,10 @@ function MainController(BettingService, $timeout) {
     vm.currentRace = {};
     vm.arrayOfIds = [];
     vm.arrayOfBets = [];
-    vm.maxLength = 8; // max number of frogs
+    vm.maxFrogs = 8; // max number of frogs
     vm.cashOnHand = 300;
+    vm.maxBetsPerRace = 2; // cant bet more than twice per race
+    
     vm.newRace = function () {
         if (!vm.currentRace.open) {  // want to prevent new race registered before current race is completed
         vm.raceId = BettingService.registerRace();
@@ -21,7 +24,8 @@ function MainController(BettingService, $timeout) {
         vm.winnerFlag = false;
         vm.racing = false;
         vm.arrayOfBets = [];
-        } else {alert('please complete current race before a new race can be registered');}
+        } else {
+            alert('Please complete current race before a new race can be registered');}
     }
     
     vm.changeRace = function(id) {
@@ -30,27 +34,27 @@ function MainController(BettingService, $timeout) {
         vm.raceId = id;
         vm.frogs = BettingService.getContestants(id);
         vm.winnerFlag = true;
-        vm.racing = false; } 
+        vm.racing = false; 
+        vm.arrayOfBets = vm.currentRace.bets;} 
     }
     
 vm.printRace = function() {
     console.log(vm.currentRace);}
     
 vm.newBet = function(name, bet) {
-    if (!vm.racing) {
-        if (bet > 0) {
+    if (BettingService.isValidBet(bet, vm.cashOnHand, vm.frogs.length, vm.racing)) {
              var thisBet = {
             name: name,
             wager: bet
         };
-    alert('you want to bet '+bet + ' on ' +name);
-    BettingService.placeBet(vm.raceId, name, bet);
-    vm.cashOnHand -= bet;
-    vm.arrayOfBets.push(thisBet);
-    }
-    else {alert("bets need to be greater than zero");}
-    }
-    else {alert('cant bet after the race has started');}
+    $('#wagerInput').val(''); // clear wager input box
+    if (vm.arrayOfBets.length < vm.maxBetsPerRace) {
+        BettingService.placeBet(vm.raceId, name, bet);
+        vm.cashOnHand -= bet;
+        vm.arrayOfBets.push(thisBet);}       
+    else {alert('No more than 2 bets per race');}
+    
+    } 
 }
     
     vm.createFrogObj = function (name, posx) {
@@ -65,7 +69,7 @@ vm.newBet = function(name, bet) {
     vm.addFrog = function () {
         if (vm.raceId != undefined) {
             if (!vm.racing) {
-                if (vm.frogs.length <=7) {
+                if (vm.frogs.length < vm.maxFrogs) {
                 var thisFr = vm.createFrogObj('Frog' + ' ' + (vm.frogs.length + 1), 0);
                 BettingService.addContestant(vm.raceId, thisFr); }
                 else {alert('max of eight contestants reached');}
@@ -74,6 +78,23 @@ vm.newBet = function(name, bet) {
         else { alert("must register a race by hitting new race before adding frogs"); }
     }
 
+     vm.settleBets = function (winningFrog) {
+         var betPaidOff = false;
+         var winningWager = 0;
+         vm.currentRace = BettingService.getRace(vm.raceId);
+        for (var i = 0; i<vm.currentRace.bets.length; i++) {
+            var betObj = vm.currentRace.bets[i];
+            if (betObj.name === winningFrog.name) {
+                betPaidOff = true;
+                winningWager = betObj.wager; }
+        }
+        if (betPaidOff) {
+            alert('Congrats. You picked the winning frog '+winningFrog.name+ ' and won twice your bet of '+winningWager);
+            //console.log(vm.cashOnHand, winningWager);
+            vm.cashOnHand = vm.cashOnHand + winningWager*2;
+            
+        } else {alert('sorry. your frog(s) didnt win');}
+     }
 
 
     vm.race = function () {
@@ -91,8 +112,9 @@ vm.newBet = function(name, bet) {
                 vm.winnerFlag = true;
                 vm.racing = false;
                 BettingService.closeRace(vm.raceId);
-                console.log(vm.currentRace, vm.raceId);
                 alert('We have a winner ' + vm.frogs[i].name + ' at ' + vm.frogs[i].pos);
+                BettingService.setWinner(vm.raceId, vm.frogs[i]);
+                vm.settleBets(vm.frogs[i]);
                 break;
             }
 
@@ -162,14 +184,37 @@ function BettingService() {
     }
     
     this.closeRace = function (raceId) {
-        //No more bets please the race has started
-        _races[raceId].open = false;
+        _races[raceId].open = false;  //No more bets please the race has started
     }
 
     this.getContestants = function (raceId) {
-        //just returns the contestants for a specified race
         return _races[raceId].contestants; // an array of contestants for the current race
     }
+   
+   this.setWinner = function (id, winner){
+      _races[id].winner = winner;
+   }
+   
+ this.isValidBet = function(bet, cash, len, racing) {
+   if (racing) {
+       alert('Cant bet after the race has started');
+       return false;
+   }
+   else if (bet <=0) {
+       alert('Bets need to be gerater than zero');
+       return false;
+   }
+   else if (bet > cash) {
+       alert('You cant bet more than your cash on hand. Try again');
+       return false;
+   } else if (len <=1) {
+       alert('need at lest two players to bet');
+       return false;
+   }
+    else {
+        return true;
+    }     
+ }
    
  this.placeBet = function (raceId, bettingOn, wager) {
          
@@ -190,7 +235,8 @@ function BettingService() {
         this.tickets = 0;
         this.contestants = [];
         this.open = true;
-        this.bets = [];                       // was {}
+        this.bets = [];     // was {}
+        this.winner = {};                       
         _races[this.id] = this;
         _raceId++;
     }
